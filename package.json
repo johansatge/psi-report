@@ -27,6 +27,7 @@
   "dependencies": {
     "async": "^1.5.0",
     "colors": "^1.1.2",
+    "file-size": "^1.0.0",
     "psi": "^2.0.0",
     "simplecrawler": "^0.5.4",
     "yargs": "^3.29.0"
