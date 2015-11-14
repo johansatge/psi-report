@@ -1,0 +1,34 @@
+{
+  "name": "psi-report",
+  "version": "1.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johansatge/psi-report.git"
+  },
+  "bin": {
+    "psi-report": "src/cli.js"
+  },
+  "keywords": [
+    "google",
+    "psi",
+    "pagespeed",
+    "insights",
+    "crawler",
+    "report",
+    "spider"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/johansatge/psi-report/issues"
+  },
+  "homepage": "https://github.com/johansatge/psi-report#readme",
+  "dependencies": {
+    "async": "^1.5.0",
+    "colors": "^1.1.2",
+    "psi": "^2.0.0",
+    "simplecrawler": "^0.5.4",
+    "yargs": "^3.29.0"
+  }
+}
