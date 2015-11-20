@@ -3,6 +3,7 @@
 
     'use strict';
 
+    var colors = require('colors');
     var Crawler = require('simplecrawler');
 
     var m = function(baseurl)
@@ -22,9 +23,11 @@
 
             crawler.addFetchCondition(_filterFetchCondition);
             crawler.on('fetchcomplete', _onCrawlerItemComplete);
+            crawler.on('fetcherror', _onCrawlerItemError);
             crawler.on('complete', _onCrawlerComplete);
 
-            crawler.start();
+            console.log('Crawling ' + colors.underline(baseurl.href));
+            crawler.start(); // @todo handle errors
         };
 
         function _onCrawlerItemComplete(item)
@@ -34,10 +37,16 @@
             {
                 if (item.url.search(baseurl.href) === 0)
                 {
-                    console.log('Found ' + item.url);
+                    var readable_url = item.url.replace(baseurl.href, '');
+                    console.log('Found ' + colors.underline(readable_url.length > 0 ? readable_url : '/'));
                     urls.push(item.url);
                 }
             }
+        }
+
+        function _onCrawlerItemError(item)
+        {
+            console.log(colors.yellow('Error when fetching ' + item.url));
         }
 
         function _filterFetchCondition(url)

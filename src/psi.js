@@ -1,12 +1,13 @@
-(function(module)
+(function(module, process)
 {
 
     'use strict';
 
     var psi = require('psi');
     var async = require('async');
+    var colors = require('colors');
 
-    var m = function(urls)
+    var m = function(baseurl, urls)
     {
         var results = [];
         var callback = null;
@@ -14,8 +15,7 @@
         this.crawl = function(func)
         {
             callback = func;
-
-            var psi_queue = async.queue(_getPSIData, 10);
+            var psi_queue = async.queue(_getPSIData, 5);
             psi_queue.drain = _onPSIQueueDone;
             for (var index = 0; index < urls.length; index += 1)
             {
@@ -23,16 +23,21 @@
             }
         };
 
-        var _getPSIData = function(task, callback)
+        var _getPSIData = function(task, done)
         {
-            psi(task.url, {strategy: 'mobile'}).then(function(data)
+            psi(task.url, {strategy: 'mobile'}).then(function(data) // @todo also get desktop
             {
                 if (data.responseCode == 200)
                 {
-                    console.log('Got PSI data for ' + task.url);
+                    var readable_url = task.url.replace(baseurl.href, '');
+                    console.log('Got Insights for ' + colors.underline(readable_url.length > 0 ? readable_url : '/'));
                     results.push(data);
                 }
-                callback();
+                done();
+            }).catch(function(error)
+            {
+                console.log(colors.red(error.message));
+                process.exit();
             });
         };
 
@@ -45,4 +50,4 @@
 
     module.exports = m;
 
-})(module);
+})(module, process);

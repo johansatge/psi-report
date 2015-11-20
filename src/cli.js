@@ -24,21 +24,27 @@
     var baseurl = url.parse(argv._[0].search(/https?:\/\//) !== -1 ? argv._[0] : 'http://' + argv._[0]);
 
     var crawler = new Crawler(baseurl);
-    crawler.crawl(function(urls)
+    crawler.crawl(_onCrawled);
+
+    function _onCrawled(urls)
     {
-        var psi = new PSI(urls);
-        psi.crawl(function(results)
+        var psi = new PSI(baseurl, urls);
+        psi.crawl(_onGetPSIResults);
+    }
+
+    function _onGetPSIResults(results)
+    {
+        var report = new Report(results);
+        report.build(_onBuiltReport);
+    }
+
+    function _onBuiltReport(path)
+    {
+        console.log(colors.green('Report built.') + ' (' + path + ')');
+        if (os.platform() === 'darwin')
         {
-            var report = new Report(results);
-            report.build(function(path)
-            {
-                console.log(colors.green('Report built.') + ' (' + path + ')');
-                if (os.platform() === 'darwin')
-                {
-                    exec('open ' + path);
-                }
-            });
-        });
-    });
+            exec('open ' + path);
+        }
+    }
 
 })(process);
