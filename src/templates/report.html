@@ -5,23 +5,268 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>PSI Results</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <style>
-            .red
+            html, body, div, h1, h2, h3, p, span, i, hr, table, tbody, tr, td, button
             {
-                color: red;
+                margin      : 0;
+                padding     : 0;
+                border      : 0;
+                outline     : 0;
+                box-sizing  : border-box;
+                font-family : Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-weight : 400;
+                color       : #333333;
             }
-            .orange
+
+            h1
             {
-                color: orange;
+                padding       : 20px;
+                background    : linear-gradient(to bottom, #fafafa, #f5f5f5);
+                border-bottom : 1px solid #eeeeee;
+                margin        : 0 0 40px 0;
+                line-height   : 50px;
+                font-size     : 32px;
             }
-            .green
+
+            h1 a
             {
-                color: green;
+                float : right;
             }
+
+            h1 img
+            {
+                height : 60px;
+            }
+
+            .result
+            {
+                margin  : 20px;
+                padding : 15px;
+                border  : 1px solid #cccccc;
+            }
+
+            .result:after
+            {
+                content : ' ';
+                display : block;
+                clear   : both;
+            }
+
+            .heading
+            {
+                position      : relative;
+                padding       : 0 0 10px 0;
+            }
+
+            .toggle
+            {
+                float      : left;
+                background : transparent;
+                width      : 28px;
+                height     : 28px;
+                margin     : 5px 5px 0 -6px;
+                cursor     : pointer;
+            }
+
+            .toggle .fa
+            {
+                color      : #cccccc;
+                font-size  : 20px;
+                transition : transform 200ms;
+            }
+
+            .toggle.toggled .fa
+            {
+                transform : rotate(90deg);
+            }
+
+            h2
+            {
+                position    : relative;
+                font-weight : normal;
+                font-size   : 18px;
+                margin      : 5px 450px 0 0;
+                line-height : 36px;
+                white-space : nowrap;
+                overflow    : hidden;
+            }
+
+            h2:after
+            {
+                content    : ' ';
+                display    : block;
+                position   : absolute;
+                top        : 0;
+                right      : 0;
+                width      : 50px;
+                height     : 100%;
+                background : linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
+            }
+
+            h2 a,
+            h2 a:visited
+            {
+                color           : inherit;
+                text-decoration : none;
+            }
+
+            h2 a.button,
+            h2 a.button:visited
+            {
+                background-image : linear-gradient(to bottom, #4d90fe, #4787ed);
+                border           : 1px solid #3079ed;
+                color            : #ffffff;
+                padding          : 6px 9px 6px 9px;
+                margin           : 0 0 0 5px;
+                font-size        : 12px;
+                border-radius    : 2px;
+                text-transform   : uppercase;
+            }
+
+            .scores
+            {
+                position : absolute;
+                top      : 0;
+                right    : 0;
+            }
+
+            .score-item
+            {
+                display: inline-block;
+                font-size: 18px;
+                margin: 0 0 0 15px;
+            }
+
+            .score-item .fa
+            {
+                float : left;
+            }
+
+            .score-item .fa-desktop
+            {
+                font-size : 17px;
+                margin    : 11px 6px 0 0;
+            }
+
+            .score-item .fa-mobile
+            {
+                font-size : 24px;
+                margin    : 7px 6px 0 0;
+            }
+
+            .score-item .score
+            {
+                position   : relative;
+                display    : inline-block;
+                color      : #ffffff;
+                padding    : 12px 8px 4px 8px;
+                background : #cccccc;
+            }
+
+            .score-item .red
+            {
+                background : red;
+            }
+
+            .score-item .orange
+            {
+                background : orange;
+            }
+
+            .score-item .green
+            {
+                background : green;
+            }
+
+            .score-item .type
+            {
+                position  : absolute;
+                color     : #ffffff;
+                top       : 2px;
+                left      : 8px;
+                font-size : 9px;
+            }
+
+            .details
+            {
+                margin     : 15px 0 0 0;
+                border-top : 1px solid #dddddd;
+                padding    : 20px 0 0 0;
+            }
+
+            .detail
+            {
+                float : left;
+                width : 49%;
+            }
+
+            .detail:last-child
+            {
+                margin : 0 0 0 2%;
+            }
+
+            h3
+            {
+                font-size : 22px;
+                margin    : 0 0 10px 0;
+            }
+
+            table
+            {
+                width  : 100%;
+                border : 1px solid #ebebeb;
+            }
+
+            table td
+            {
+                padding       : 6px 8px 6px 8px;
+                border-bottom : 1px solid #ebebeb;
+            }
+
+            table td:first-child
+            {
+                border-right : 1px solid #ebebeb;
+            }
+
+            table tr:last-child td
+            {
+                border-bottom : 0;
+            }
+
         </style>
     </head>
     <body>
-        <h1>PSI Results</h1>
+        <h1>
+            PSI Report
+            <a href="https://developers.google.com/speed/pagespeed/insights" target="_blank">
+                <img src="https://developers.google.com/_static/images/developers-logo.svg" alt="Google Developers - PageSpeed Insights">
+            </a>
+        </h1>
         <!--results-->
+        <script>
+            var toggles = document.querySelectorAll('.toggle');
+            for(var index = 0; index < toggles.length; index += 1)
+            {
+                toggles[index].addEventListener('click', _onToggle);
+            }
+            function _onToggle(evt)
+            {
+                evt.preventDefault();
+                var toggle = evt.currentTarget;
+                var details = toggle.parentNode.parentNode.querySelector('.details');
+                if (toggle.className.search('toggled') !== -1)
+                {
+                    toggle.className = toggle.className.replace('toggled', '');
+                    details.style.display = 'none';
+                }
+                else
+                {
+                    toggle.className += ' toggled';
+                    details.style.display = 'block';
+                }
+            }
+        </script>
     </body>
 </html>

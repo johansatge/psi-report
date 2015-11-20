@@ -15,7 +15,8 @@
 
         this.build = function(callback)
         {
-            for (var index = 0; index < results.length; index += 1)
+            console.log('Building report...');
+            for (var index in results)
             {
                 html_report = html_report.replace('<!--results-->', _buildItem(results[index]) + '<!--results-->');
             }
@@ -26,27 +27,51 @@
 
         var _buildItem = function(result)
         {
-            var placeholders = {
-                url: result.id,
-                title: result.title,
-                strategy: '@todo',
-                speed_score: result.ruleGroups.SPEED.score,
-                speed_class: result.ruleGroups.SPEED.score >= 50 ? (result.ruleGroups.SPEED.score >= 90 ? 'green' : 'orange') : 'red',
-                usability_score: result.ruleGroups.USABILITY.score,
-                usability_class: result.ruleGroups.USABILITY.score >= 50 ? (result.ruleGroups.USABILITY.score >= 90 ? 'green' : 'orange') : 'red',
-                html_size: filesize(parseInt(result.pageStats.htmlResponseBytes)).human(),
-                css_size: filesize(parseInt(result.pageStats.cssResponseBytes)).human(),
-                js_size: filesize(parseInt(result.pageStats.javascriptResponseBytes)).human(),
-                img_size: filesize(parseInt(result.pageStats.imageResponseBytes)).human(),
-                request_size: filesize(parseInt(result.pageStats.totalRequestBytes)).human(),
-                total_resources: result.pageStats.numberResources,
-                css_resources: result.pageStats.numberCssResources,
-                js_resources: result.pageStats.numberJsResources
-            };
             var html = html_item;
-            for (var placeholder in placeholders)
+            for (var strategy in result)
             {
-                html = html.replace('{{' + placeholder + '}}', placeholders[placeholder]);
+                var placeholders = {};
+
+                placeholders.url = result[strategy].id;
+                placeholders.title = result[strategy].title;
+                placeholders.strategy = strategy;
+
+                if (typeof result[strategy].ruleGroups.SPEED !== 'undefined')
+                {
+                    placeholders.speed_score = result[strategy].ruleGroups.SPEED.score;
+                    placeholders.speed_class = result[strategy].ruleGroups.SPEED.score >= 50 ? (result[strategy].ruleGroups.SPEED.score >= 90 ? 'green' : 'orange') : 'red';
+                }
+                else
+                {
+                    placeholders.speed_score = '?';
+                    placeholders.speed_class = 'orange';
+                }
+
+                if (typeof result[strategy].ruleGroups.USABILITY !== 'undefined')
+                {
+                    placeholders.usability_score = result[strategy].ruleGroups.USABILITY.score;
+                    placeholders.usability_class = result[strategy].ruleGroups.USABILITY.score >= 50 ? (result[strategy].ruleGroups.USABILITY.score >= 90 ? 'green' : 'orange') : 'red';
+                }
+                else
+                {
+                    placeholders.usability_score = '?';
+                    placeholders.usability_class = 'orange';
+                }
+
+                placeholders.html_size = filesize(parseInt(result[strategy].pageStats.htmlResponseBytes)).human();
+                placeholders.css_size = filesize(parseInt(result[strategy].pageStats.cssResponseBytes)).human();
+                placeholders.js_size = filesize(parseInt(result[strategy].pageStats.javascriptResponseBytes)).human();
+                placeholders.img_size = filesize(parseInt(result[strategy].pageStats.imageResponseBytes)).human();
+                placeholders.request_size = filesize(parseInt(result[strategy].pageStats.totalRequestBytes)).human();
+
+                placeholders.total_resources = result[strategy].pageStats.numberResources;
+                placeholders.css_resources = result[strategy].pageStats.numberCssResources;
+                placeholders.js_resources = result[strategy].pageStats.numberJsResources;
+
+                for (var placeholder in placeholders)
+                {
+                    html = html.replace(new RegExp('{{' + strategy + '.' + placeholder + '}}', 'g'), placeholders[placeholder]);
+                }
             }
             return html;
         };
