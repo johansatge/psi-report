@@ -15,6 +15,14 @@
     var PSI = require('./psi.js');
     var Report = require('./report.js');
 
+    var manifest = require('../package.json');
+
+    if (argv.version)
+    {
+        console.log('psi-report ' + manifest.version);
+        process.exit();
+    }
+
     if (typeof argv._[0] === 'undefined')
     {
         console.log(colors.red('Please provide a valid base URL'));
