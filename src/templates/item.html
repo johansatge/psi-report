@@ -7,11 +7,6 @@
             <a href="{{mobile.url}}" target="_blank">
                 {{mobile.url}}
             </a>
-            <!--
-            <a class="button" href="https://developers.google.com/speed/pagespeed/insights?url={{mobile.url}}" target="_blank">
-                Run in Insights
-            </a>
-            -->
         </h2>
         <div class="scores">
             <div class="score-item">
@@ -30,10 +25,6 @@
                 <span class="score {{desktop.speed_class}}">
                     <span class="type">Speed</span>
                     {{desktop.speed_score}} / 100
-                </span>
-                <span class="score {{desktop.usability_class}}">
-                    <span class="type">Usability</span>
-                    {{desktop.usability_score}} / 100
                 </span>
             </div>
         </div>
@@ -79,6 +70,10 @@
                 </tr>
                 </tbody>
             </table>
+            <a class="button" href="https://developers.google.com/speed/pagespeed/insights/?url={{mobile.encoded_url}}" target="_blank">
+                <i class="fa fa-play"></i>
+                Run in Insights
+            </a>
         </div>
         <div class="detail">
             <h3>

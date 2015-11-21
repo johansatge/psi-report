@@ -42,7 +42,7 @@
 
     function _onGetPSIResults(results)
     {
-        var report = new Report(results);
+        var report = new Report(baseurl.href, results);
         report.build(_onBuiltReport);
     }
 

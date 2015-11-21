@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>PSI Results</title>
+        <title>PSI Report ({{url}})</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -38,6 +38,35 @@
             h1 img
             {
                 height : 60px;
+            }
+
+            .overall
+            {
+                position    : relative;
+                margin      : 20px;
+                font-size   : 22px;
+                line-height : 38px;
+                white-space : nowrap;
+                overflow: hidden;
+            }
+
+            .overall:after
+            {
+                content    : ' ';
+                display    : block;
+                position   : absolute;
+                top        : 0;
+                right      : 0;
+                width      : 50px;
+                height     : 100%;
+                background : linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
+            }
+
+            .overall a,
+            .overall a:visited
+            {
+                color           : inherit;
+                text-decoration : none;
             }
 
             .result
@@ -84,25 +113,12 @@
 
             h2
             {
-                position    : relative;
                 font-weight : normal;
                 font-size   : 18px;
-                margin      : 5px 450px 0 0;
+                margin      : 5px 0 0 0;
                 line-height : 36px;
                 white-space : nowrap;
                 overflow    : hidden;
-            }
-
-            h2:after
-            {
-                content    : ' ';
-                display    : block;
-                position   : absolute;
-                top        : 0;
-                right      : 0;
-                width      : 50px;
-                height     : 100%;
-                background : linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
             }
 
             h2 a,
@@ -112,17 +128,28 @@
                 text-decoration : none;
             }
 
-            h2 a.button,
-            h2 a.button:visited
+            .button,
+            .button:visited
             {
+                display          : inline-block;
                 background-image : linear-gradient(to bottom, #4d90fe, #4787ed);
                 border           : 1px solid #3079ed;
                 color            : #ffffff;
                 padding          : 6px 9px 6px 9px;
-                margin           : 0 0 0 5px;
+                margin           : 15px 0 0 0;
                 font-size        : 12px;
+                font-weight      : 700;
                 border-radius    : 2px;
                 text-transform   : uppercase;
+                text-decoration  : none;
+            }
+
+            .button i
+            {
+                color     : #ffffff;
+                font-size : 10px;
+                float     : left;
+                margin    : 3px 8px 0 0;
             }
 
             .scores
@@ -130,6 +157,20 @@
                 position : absolute;
                 top      : 0;
                 right    : 0;
+                background  : #ffffff;
+                line-height : normal;
+            }
+
+            .scores:after
+            {
+                content    : ' ';
+                display    : block;
+                position   : absolute;
+                top        : 0;
+                left       : -50px;
+                width      : 50px;
+                height     : 100%;
+                background : linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
             }
 
             .score-item
@@ -244,6 +285,9 @@
                 <img src="https://developers.google.com/_static/images/developers-logo.svg" alt="Google Developers - PageSpeed Insights">
             </a>
         </h1>
+        <div class="overall">
+            <a href="{{url}}" target="_blank">{{url}}</a>
+        </div>
         <!--results-->
         <script>
             var toggles = document.querySelectorAll('.toggle');

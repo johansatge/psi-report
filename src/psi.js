@@ -16,7 +16,7 @@
         this.crawl = function(func)
         {
             callback = func;
-            var psi_queue = async.queue(_getPSIData, 5);
+            var psi_queue = async.queue(_getPSIData, 3);
             psi_queue.drain = _onPSIQueueDone;
             for (var index = 0; index < urls.length; index += 1)
             {
@@ -43,7 +43,7 @@
                 done();
             }).catch(function(error)
             {
-                console.log(colors.red(error.message));
+                console.log(colors.red('PSI error: ' + error.message));
                 process.exit();
             });
         };

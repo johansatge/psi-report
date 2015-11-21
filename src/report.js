@@ -7,7 +7,7 @@
     var os = require('os');
     var filesize = require('file-size');
 
-    var m = function(results)
+    var m = function(url, results)
     {
 
         var html_report = fs.readFileSync(cwd + '/templates/report.html', {encoding: 'utf8'});
@@ -20,6 +20,7 @@
             {
                 html_report = html_report.replace('<!--results-->', _buildItem(results[index]) + '<!--results-->');
             }
+            html_report = html_report.replace(new RegExp('{{url}}', 'g'), url);
             var report_path = os.tmpdir().replace(/\/$/, '') + '/report_' + new Date().getTime() + '.html';
             fs.writeFileSync(report_path, html_report, {encoding: 'utf8'});
             callback(report_path);
@@ -33,6 +34,7 @@
                 var placeholders = {};
 
                 placeholders.url = result[strategy].id;
+                placeholders.encoded_url = encodeURIComponent(result[strategy].id);
                 placeholders.title = result[strategy].title;
                 placeholders.strategy = strategy;
 
@@ -44,7 +46,7 @@
                 else
                 {
                     placeholders.speed_score = '?';
-                    placeholders.speed_class = 'orange';
+                    placeholders.speed_class = '';
                 }
 
                 if (typeof result[strategy].ruleGroups.USABILITY !== 'undefined')
@@ -55,7 +57,7 @@
                 else
                 {
                     placeholders.usability_score = '?';
-                    placeholders.usability_class = 'orange';
+                    placeholders.usability_class = '';
                 }
 
                 placeholders.html_size = filesize(parseInt(result[strategy].pageStats.htmlResponseBytes)).human();
