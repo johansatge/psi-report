@@ -34,19 +34,21 @@ psi-report http://domain.org
 
 Output format (default is **html**).
 
+#### `--save=/path/to/file.html|json`
+
+Sets the path of the report.
+
+If no path is set, the file will be saved in the OS [temp directory](https://nodejs.org/api/os.html#os_os_tmpdir).
+
 ##### `--stdout`
 
 Echoes the result code instead of saving it on the disk.
 
-##### `--silent`
-
-Do not print information when crawling the website.
-
-Automatically set when using the `--stdout` option.
-
 ##### `--open`
 
 Opens the generated report in the default application. (OSX only)
+
+This will do nothing if the `--stdout` option is set.
 
 ## Programmatic usage
 
