@@ -5,17 +5,22 @@
 
     var colors = require('colors');
     var Crawler = require('simplecrawler');
+    var EventEmitter = require('events').EventEmitter;
 
     var m = function(baseurl)
     {
+
+        var emitter = new EventEmitter();
         var urls = [];
         var crawler = null;
-        var callback = null;
 
-        this.crawl = function(func)
+        this.on = function(event, callback)
         {
-            callback = func;
+            emitter.on(event, callback);
+        };
 
+        this.crawl = function()
+        {
             crawler = new Crawler(baseurl.host, baseurl.path, baseurl.port !== null ? baseurl.port : 80);
             crawler.initialProtocol = baseurl.protocol.replace(/:$/, '');
             crawler.supportedMimeTypes = [/text\/html/, /application\/xhtml\+xml/];
@@ -26,7 +31,6 @@
             crawler.on('fetcherror', _onCrawlerItemError);
             crawler.on('complete', _onCrawlerComplete);
 
-            console.log('Crawling ' + colors.underline(baseurl.href));
             crawler.start(); // @todo handle errors
         };
 
@@ -37,16 +41,15 @@
             {
                 if (item.url.search(baseurl.href) === 0)
                 {
-                    var readable_url = item.url.replace(baseurl.href, '');
-                    console.log('Found ' + colors.underline(readable_url.length > 0 ? readable_url : '/'));
                     urls.push(item.url);
+                    emitter.emit('fetched', item.url);
                 }
             }
         }
 
         function _onCrawlerItemError(item)
         {
-            console.log(colors.yellow('Error when fetching ' + item.url));
+            emitter.emit('error', item.url);
         }
 
         function _filterFetchCondition(url)
@@ -56,7 +59,7 @@
 
         function _onCrawlerComplete()
         {
-            callback(urls);
+            emitter.emit('complete', urls);
         }
     };
 

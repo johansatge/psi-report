@@ -5,15 +5,10 @@
 
     'use strict';
 
-    var url = require('url');
-    var exec = require('child_process').exec;
     var colors = require('colors');
     var argv = require('yargs').argv;
-    var os = require('os');
 
-    var Crawler = require('./crawler.js');
-    var PSI = require('./psi.js');
-    var Report = require('./report.js');
+    var Reporter = require('./core.js');
 
     var manifest = require('../package.json');
 
@@ -23,36 +18,42 @@
         process.exit();
     }
 
-    if (typeof argv._[0] === 'undefined')
+    var reporter = new Reporter({
+        baseurl: argv._[0],
+        format: 'html'
+    });
+
+    reporter.on('error', function(error)
     {
-        console.log(colors.red('Please provide a valid base URL'));
-        process.exit();
-    }
+        console.log(colors.red(error.message));
+        process.exit(1);
+    });
 
-    var baseurl = url.parse(argv._[0].search(/https?:\/\//) !== -1 ? argv._[0] : 'http://' + argv._[0]);
-
-    var crawler = new Crawler(baseurl);
-    crawler.crawl(_onCrawled);
-
-    function _onCrawled(urls)
+    reporter.on('crawler_start', function(url)
     {
-        var psi = new PSI(baseurl, urls);
-        psi.crawl(_onGetPSIResults);
-    }
+        console.log('Getting report...');
+    });
 
-    function _onGetPSIResults(results)
+    reporter.on('crawler_url_fetched', function(url)
     {
-        var report = new Report(baseurl.href, results);
-        report.build(_onBuiltReport);
-    }
+        console.log('Found ' + colors.underline(url));
+    });
 
-    function _onBuiltReport(path)
+    reporter.on('crawler_url_error', function(url)
     {
-        console.log(colors.green('Report built.') + ' (' + path + ')');
-        if (os.platform() === 'darwin')
-        {
-            exec('open ' + path);
-        }
-    }
+        console.log(colors.yellow('Error when fetching ' + colors.underline(url)));
+    });
+
+    reporter.on('crawler_done', function(urls)
+    {
+        console.log(colors.green('Found ' + urls.length + ' URLS'));
+    });
+
+    reporter.on('psi_url_fetched', function(result)
+    {
+
+    });
+
+    reporter.start();
 
 })(process);
