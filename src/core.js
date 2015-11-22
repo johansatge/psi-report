@@ -3,7 +3,7 @@
 
     'use strict';
 
-    var exec = require('child_process').exec;
+    var fs = require('fs');
     var url = require('url');
     var Crawler = require('./crawler.js');
     var PSI = require('./psi.js');
@@ -15,6 +15,7 @@
 
         var emitter = new EventEmitter();
         var format = typeof params.format !== 'undefined' ? params.format : 'html';
+        var output = typeof params.output !== 'undefined' ? params.output : false;
         var baseurl = false;
         if (typeof params.baseurl !== 'undefined')
         {
@@ -30,7 +31,7 @@
         {
             if (baseurl === false)
             {
-                emitter.emit('error', new Error('Please provide a valid URL'));
+                emitter.emit('complete', new Error('Please provide a valid URL'), baseurl, null);
                 return;
             }
             var crawler = new Crawler(baseurl);
@@ -49,6 +50,11 @@
 
         var _onCrawled = function(urls)
         {
+            if (urls.length === 0)
+            {
+                emitter.emit('complete', new Error('No URLS found'), baseurl, null);
+                return;
+            }
             var psi = new PSI(baseurl, urls);
             psi.on('fetched', function(url, strategy)
             {
@@ -62,20 +68,36 @@
             psi.crawl();
         };
 
-        var _onGotPSIResults = function(results)
+        var _onGotPSIResults = function(results, count)
         {
-            var report = new Report(baseurl.href, results);
-            report.build(_onBuiltReport);
+            if (count === 0)
+            {
+                emitter.emit('complete', new Error('No PSI results found'), baseurl, null);
+                return;
+            }
+            if (format === 'json')
+            {
+                _onBuiltResult(JSON.stringify(results, null, 2));
+            }
+            else
+            {
+                var report = new Report(baseurl.href, results);
+                report.build(_onBuiltResult);
+            }
         };
 
-        var _onBuiltReport = function(path)
+        var _onBuiltResult = function(result)
         {
-            var colors = require('colors');
-            console.log(colors.green('Report built.') + ' (' + path + ')');
-            var os = require('os');
-            if (os.platform() === 'darwin')
+            if (output !== false)
             {
-                exec('open ' + path);
+                fs.writeFile(output, result, {encoding: 'utf8'}, function(error)
+                {
+                    emitter.emit('error', error, baseurl, result);
+                });
+            }
+            else
+            {
+                emitter.emit('complete', null, baseurl, result);
             }
         };
 

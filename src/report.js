@@ -16,15 +16,12 @@
 
         this.build = function(callback)
         {
-            console.log('Building report...');
             for (var index in results)
             {
                 html_report = html_report.replace('<!--results-->', _buildItem(results[index]) + '<!--results-->');
             }
             html_report = html_report.replace(new RegExp('{{url}}', 'g'), url);
-            var report_path = os.tmpdir().replace(/\/$/, '') + '/report_' + new Date().getTime() + '.html';
-            fs.writeFileSync(report_path, html_report, {encoding: 'utf8'});
-            callback(report_path);
+            callback(html_report);
         };
 
         var _buildItem = function(result)
@@ -100,7 +97,7 @@
             var text = rule.summary.format;
             if (typeof rule.summary.args !== 'undefined')
             {
-                for(var index = 0; index < rule.summary.args.length; index += 1)
+                for (var index = 0; index < rule.summary.args.length; index += 1)
                 {
                     var arg = rule.summary.args[index];
                     if (arg.type !== 'HYPERLINK')

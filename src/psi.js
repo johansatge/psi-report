@@ -1,4 +1,4 @@
-(function(module, process)
+(function(module)
 {
 
     'use strict';
@@ -6,13 +6,13 @@
     var crypto = require('crypto');
     var psi = require('psi');
     var async = require('async');
-    var colors = require('colors');
     var EventEmitter = require('events').EventEmitter;
 
     var m = function(baseurl, urls)
     {
         var emitter = new EventEmitter();
-        var results = [];
+        var results = {};
+        var result_count = 0;
         var callback = null;
 
         this.on = function(event, callback)
@@ -38,13 +38,13 @@
             {
                 if (data.responseCode == 200)
                 {
-                    var id = crypto.createHash('md5').update(task.url).digest('hex');
                     emitter.emit('fetched', task.url, task.strategy);
-                    if (typeof results[id] === 'undefined')
+                    if (typeof results[task.url] === 'undefined')
                     {
-                        results[id] = {};
+                        results[task.url] = {};
                     }
-                    results[id][task.strategy] = data;
+                    results[task.url][task.strategy] = data;
+                    result_count += 1;
                 }
                 done();
             }).catch(function(error)
@@ -56,11 +56,11 @@
 
         var _onPSIQueueDone = function()
         {
-            emitter.emit('complete', results);
+            emitter.emit('complete', results, result_count);
         };
 
     };
 
     module.exports = m;
 
-})(module, process);
+})(module);

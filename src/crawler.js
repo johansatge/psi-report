@@ -3,7 +3,6 @@
 
     'use strict';
 
-    var colors = require('colors');
     var Crawler = require('simplecrawler');
     var EventEmitter = require('events').EventEmitter;
 
