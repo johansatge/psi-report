@@ -13,7 +13,7 @@
     {
 
         var emitter = new EventEmitter();
-        var format = typeof params.format !== 'undefined' ? params.format : 'html';
+        var format = typeof params.format !== 'undefined' && params.format === 'json' ? 'json' : 'html';
         var baseurl = false;
         if (typeof params.baseurl !== 'undefined')
         {

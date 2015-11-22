@@ -3,7 +3,6 @@
 
     'use strict';
 
-    var crypto = require('crypto');
     var psi = require('psi');
     var async = require('async');
     var request = require('request');

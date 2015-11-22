@@ -5,6 +5,9 @@
 
     'use strict';
 
+    var exec = require('child_process').exec;
+    var fs = require('fs');
+    var os = require('os');
     var colors = require('colors');
     var argv = require('yargs').argv;
 
@@ -18,9 +21,10 @@
         process.exit(0);
     }
 
+    var format = typeof argv.format !== 'undefined' && argv.format === 'json' ? 'json' : 'html';
     var reporter = new Reporter({
         baseurl: argv._[0],
-        format: typeof argv.format !== 'undefined' && argv.format === 'json' ? 'json' : 'html'
+        format: format
     });
 
     reporter.on('_start', function(baseurl)
@@ -50,24 +54,26 @@
             console.log(colors.red(error.message));
             process.exit(1);
         }
-        if (typeof argv.output !== 'undefined')
+        if (argv.stdout)
         {
-            try
-            {
-                fs.writeFileSync(output, data, {encoding: 'utf8'});
-                _verbose(colors.green('Done'));
-                process.exit(0);
-            }
-            catch (error)
-            {
-                console.log(colors.red(error.message));
-                process.exit(1);
-            }
-        }
-        else
-        {
-            _verbose(colors.green('Done'));
+            console.log(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
             process.exit(0);
+        }
+        var path = typeof argv.save !== 'undefined' ? argv.save : os.tmpdir().replace(/\/$/, '') + '/psi_report_' + new Date().getTime() + '.' + format;
+        try
+        {
+            fs.writeFileSync(path, data, {encoding: 'utf8'});
+            _verbose(colors.green('Report saved ') + '(' + colors.underline(path) + ')');
+            if (typeof argv.open !== 'undefined')
+            {
+                exec('open ' + path);
+            }
+            process.exit(0);
+        }
+        catch (error)
+        {
+            console.log(colors.red(error.message));
+            process.exit(1);
         }
     });
 
@@ -75,7 +81,7 @@
 
     function _verbose(message)
     {
-        if (argv.verbose)
+        if (!argv.stdout)
         {
             console.log(message);
         }

@@ -34,7 +34,7 @@ psi-report http://domain.org
 
 Output format (default is **html**).
 
-#### `--save=/path/to/file.html|json`
+##### `--save=/path/to/file.html|json`
 
 Sets the path of the report.
 
@@ -49,6 +49,10 @@ Echoes the result code instead of saving it on the disk.
 Opens the generated report in the default application. (OSX only)
 
 This will do nothing if the `--stdout` option is set.
+
+##### `--version`
+
+Outputs current version.
 
 ## Programmatic usage
 
