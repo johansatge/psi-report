@@ -3,7 +3,6 @@
 
     'use strict';
 
-    var fs = require('fs');
     var url = require('url');
     var Crawler = require('./crawler.js');
     var PSI = require('./psi.js');
@@ -15,7 +14,6 @@
 
         var emitter = new EventEmitter();
         var format = typeof params.format !== 'undefined' ? params.format : 'html';
-        var output = typeof params.output !== 'undefined' ? params.output : false;
         var baseurl = false;
         if (typeof params.baseurl !== 'undefined')
         {
@@ -37,15 +35,15 @@
             var crawler = new Crawler(baseurl);
             crawler.on('fetched', function(url)
             {
-                emitter.emit('crawler_url_fetched', url);
+                emitter.emit('_crawler_url_fetched', url);
             });
             crawler.on('error', function(url)
             {
-                emitter.emit('crawler_url_error', url);
+                emitter.emit('_crawler_url_error', url);
             });
             crawler.on('complete', _onCrawled);
             crawler.crawl();
-            emitter.emit('start', baseurl);
+            emitter.emit('_start', baseurl.href);
         };
 
         var _onCrawled = function(urls)
@@ -58,11 +56,11 @@
             var psi = new PSI(baseurl, urls);
             psi.on('fetched', function(url, strategy)
             {
-                emitter.emit('psi_url_fetched', url, strategy);
+                emitter.emit('_psi_url_fetched', url, strategy);
             });
-            psi.on('error', function(error)
+            psi.on('error', function(url, error)
             {
-                emitter.emit('psi_url_error', url, error);
+                emitter.emit('_psi_url_error', url, error);
             });
             psi.on('complete', _onGotPSIResults);
             psi.crawl();
@@ -77,7 +75,7 @@
             }
             if (format === 'json')
             {
-                _onBuiltResult(JSON.stringify(results, null, 2));
+                _onBuiltResult(results);
             }
             else
             {
@@ -86,19 +84,9 @@
             }
         };
 
-        var _onBuiltResult = function(result)
+        var _onBuiltResult = function(results)
         {
-            if (output !== false)
-            {
-                fs.writeFile(output, result, {encoding: 'utf8'}, function(error)
-                {
-                    emitter.emit('error', error, baseurl, result);
-                });
-            }
-            else
-            {
-                emitter.emit('complete', null, baseurl, result);
-            }
+            emitter.emit('complete', null, baseurl.href, results);
         };
 
     };

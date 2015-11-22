@@ -20,33 +20,28 @@
 
     var reporter = new Reporter({
         baseurl: argv._[0],
-        format: typeof argv.format !== 'undefined' && argv.format === 'json' ? 'json' : 'html',
-        output: typeof argv.output !== 'undefined' ? argv.output : false
+        format: typeof argv.format !== 'undefined' && argv.format === 'json' ? 'json' : 'html'
     });
 
-    reporter.on('crawler_start', function(baseurl)
+    reporter.on('_start', function(baseurl)
     {
-        console.log('Crawling URLS, starting from ' + colors.underline(baseurl.href));
+        _verbose('Crawling URLS, starting from ' + colors.underline(baseurl));
     });
-    reporter.on('crawler_url_fetched', function(url)
+    reporter.on('_crawler_url_fetched', function(url)
     {
-        console.log('Found ' + colors.underline(url));
+        _verbose('Found ' + colors.underline(url));
     });
-    reporter.on('crawler_url_error', function(url)
+    reporter.on('_crawler_url_error', function(url)
     {
-        console.log(colors.yellow('Error when fetching ' + colors.underline(url)));
+        _verbose(colors.yellow('Error when fetching ' + colors.underline(url)));
     });
-    reporter.on('psi_start', function()
+    reporter.on('_psi_url_fetched', function(url, strategy)
     {
-        console.log('Getting PSI results...');
+        _verbose('Got Insights (' + strategy + ') for ' + colors.underline(url));
     });
-    reporter.on('psi_url_fetched', function(url, strategy)
+    reporter.on('_psi_url_error', function(url, error)
     {
-        console.log('Got Insights (' + strategy + ') for ' + colors.underline(url));
-    });
-    reporter.on('psi_url_error', function(url, error)
-    {
-        console.log(colors.yellow('PSI error on ' + colors.underline(url) + ' (' + error.message + ')'));
+        _verbose(colors.yellow('PSI error on ' + colors.underline(url) + ' (' + error.message + ')'));
     });
     reporter.on('complete', function(error, baseurl, data)
     {
@@ -55,14 +50,35 @@
             console.log(colors.red(error.message));
             process.exit(1);
         }
+        if (typeof argv.output !== 'undefined')
+        {
+            try
+            {
+                fs.writeFileSync(output, data, {encoding: 'utf8'});
+                _verbose(colors.green('Done'));
+                process.exit(0);
+            }
+            catch (error)
+            {
+                console.log(colors.red(error.message));
+                process.exit(1);
+            }
+        }
         else
         {
-            console.log(baseurl);
-            console.log(data);
+            _verbose(colors.green('Done'));
             process.exit(0);
         }
     });
 
     reporter.start();
+
+    function _verbose(message)
+    {
+        if (argv.verbose)
+        {
+            console.log(message);
+        }
+    }
 
 })(process);

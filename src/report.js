@@ -94,8 +94,8 @@
         var _buildRule = function(rule)
         {
             var html = html_rule.replace('{{title}}', rule.localizedRuleName);
-            var text = rule.summary.format;
-            if (typeof rule.summary.args !== 'undefined')
+            var text = typeof rule.summary !== 'undefined' ? rule.summary.format : rule.localizedRuleName;
+            if (typeof rule.summary !== 'undefined' && typeof rule.summary.args !== 'undefined')
             {
                 for (var index = 0; index < rule.summary.args.length; index += 1)
                 {

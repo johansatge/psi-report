@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/johansatge/psi-report.git"
   },
+  "main": "src/core.js",
   "bin": {
     "psi-report": "src/cli.js"
   },
@@ -18,17 +19,17 @@
     "report",
     "spider"
   ],
-  "author": "",
+  "author": "Johan Satgé",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/johansatge/psi-report/issues"
   },
-  "homepage": "https://github.com/johansatge/psi-report#readme",
+  "homepage": "https://github.com/johansatge/psi-report",
   "dependencies": {
     "async": "^1.5.0",
     "colors": "^1.1.2",
     "file-size": "^1.0.0",
-    "psi": "^2.0.0",
+    "request": "^2.67.0",
     "simplecrawler": "^0.5.4",
     "yargs": "^3.29.0"
   }

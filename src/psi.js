@@ -6,6 +6,7 @@
     var crypto = require('crypto');
     var psi = require('psi');
     var async = require('async');
+    var request = require('request');
     var EventEmitter = require('events').EventEmitter;
 
     var m = function(baseurl, urls)
@@ -34,9 +35,12 @@
 
         var _getPSIData = function(task, done)
         {
-            psi(task.url, {strategy: task.strategy}).then(function(data)
+
+            var api_url = 'https://www.googleapis.com/pagespeedonline/v2/runPagespeed?strategy=$1&url=$2';
+            api_url = api_url.replace('$1', task.strategy).replace('$2', encodeURIComponent(task.url));
+            request({url: api_url, json: true}, function(error, response, data)
             {
-                if (data.responseCode == 200)
+                if (!error && response.statusCode == 200)
                 {
                     emitter.emit('fetched', task.url, task.strategy);
                     if (typeof results[task.url] === 'undefined')
@@ -46,10 +50,10 @@
                     results[task.url][task.strategy] = data;
                     result_count += 1;
                 }
-                done();
-            }).catch(function(error)
-            {
-                emitter.emit('error', task.url, error);
+                else
+                {
+                    emitter.emit('error', task.url, error);
+                }
                 done();
             });
         };
