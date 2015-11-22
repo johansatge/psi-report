@@ -30,21 +30,21 @@ psi-report http://domain.org
 
 ### Options
 
-#### `--format=[html|json]`
+##### `--format=[html|json]`
 
 Output format (default is **html**).
 
-#### `--stdout`
+##### `--stdout`
 
 Echoes the result code instead of saving it on the disk.
 
-#### `--silent`
+##### `--silent`
 
 Do not print information when crawling the website.
 
 Automatically set when using the `--stdout` option.
 
-#### `--open`
+##### `--open`
 
 Opens the generated report in the default application. (OSX only)
 
