@@ -12,6 +12,7 @@
 
         var html_report = fs.readFileSync(cwd + '/templates/report.html', {encoding: 'utf8'});
         var html_item = fs.readFileSync(cwd + '/templates/item.html', {encoding: 'utf8'});
+        var html_rule = fs.readFileSync(cwd + '/templates/rule.html', {encoding: 'utf8'});
 
         this.build = function(callback)
         {
@@ -74,9 +75,49 @@
                 {
                     html = html.replace(new RegExp('{{' + strategy + '.' + placeholder + '}}', 'g'), placeholders[placeholder]);
                 }
+
+                var has_rules = false;
+                for (var index in result[strategy].formattedResults.ruleResults)
+                {
+                    var rule = result[strategy].formattedResults.ruleResults[index];
+                    if (typeof rule.ruleImpact !== 'undefined' && rule.ruleImpact > 0)
+                    {
+                        html = html.replace('<!--' + strategy + '.rules-->', _buildRule(rule) + '<!--' + strategy + '.rules-->');
+                        has_rules = true;
+                    }
+                }
+                if (!has_rules)
+                {
+                    html_report.replace('<!--' + strategy + '.rules-->', html_rule.replace('{{title}}', 'Nothing do to'), html_rule.replace('{{text}}', 'All rules are correct.'));
+                }
             }
             return html;
         };
+
+        var _buildRule = function(rule)
+        {
+            var html = html_rule.replace('{{title}}', rule.localizedRuleName);
+            var text = rule.summary.format;
+            if (typeof rule.summary.args !== 'undefined')
+            {
+                for(var index = 0; index < rule.summary.args.length; index += 1)
+                {
+                    var arg = rule.summary.args[index];
+                    if (arg.type !== 'HYPERLINK')
+                    {
+                        text = text.replace('{{' + arg.key + '}}', arg.value);
+                    }
+                    else
+                    {
+                        text = text.replace('{{BEGIN_' + arg.key + '}}', '<a href="' + arg.value + '" target="_blank">');
+                        text = text.replace('{{END_' + arg.key + '}}', '</a>');
+                    }
+                }
+            }
+
+            html = html.replace('{{text}}', text);
+            return html;
+        }
     };
 
     module.exports = m;
