@@ -1,6 +1,8 @@
 # psi-report
 
-Crawl a website and get [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page
+Crawl a website and get [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page.
+
+![](screenshot.jpg)
 
 ---
 
@@ -22,7 +24,9 @@ npm install -g psi-report
 
 ## CLI usage
 
+```bash
 psi-report http://domain.org --format=html
+```
 
 ### Options
 

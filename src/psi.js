@@ -35,7 +35,6 @@
 
         var _getPSIData = function(task, done)
         {
-
             var api_url = 'https://www.googleapis.com/pagespeedonline/v2/runPagespeed?strategy=$1&url=$2';
             api_url = api_url.replace('$1', task.strategy).replace('$2', encodeURIComponent(task.url));
             request({url: api_url, json: true}, function(error, response, data)
