@@ -119,23 +119,23 @@ Two output formats are available.
     {
         "mobile":
         {
-            // [...] PSI raw data for mobile strategy
+            "...PSI raw data for mobile strategy..."
         },
         "desktop":
         {
-            // [...] PSI raw data for desktop strategy
+            "...PSI raw data for desktop strategy..."
         }
     },
     "http://domain.org/page2":
     {
         "mobile":
         {
-            // [...]
+            "..."
     }
 }
 ```
 
-[More information about the PSI data](https://developers.google.com/speed/docs/insights/v2/reference/pagespeedapi/runpagespeed#response).
+[More information about the PSI data format](https://developers.google.com/speed/docs/insights/v2/reference/pagespeedapi/runpagespeed#response).
 
 ## Changelog
 
