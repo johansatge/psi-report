@@ -43,19 +43,26 @@
                 emitter.emit('crawler_url_error', url);
             });
             crawler.on('complete', _onCrawled);
-
-            emitter.emit('crawler_start', baseurl);
             crawler.crawl();
+            emitter.emit('start', baseurl);
         };
 
         var _onCrawled = function(urls)
         {
-            emitter.emit('crawler_done', urls); // @todo check how many urls found, if 0, exit
             var psi = new PSI(baseurl, urls);
-            psi.crawl(_onGetPSIResults);
+            psi.on('fetched', function(url, strategy)
+            {
+                emitter.emit('psi_url_fetched', url, strategy);
+            });
+            psi.on('error', function(error)
+            {
+                emitter.emit('psi_url_error', url, error);
+            });
+            psi.on('complete', _onGotPSIResults);
+            psi.crawl();
         };
 
-        var _onGetPSIResults = function(results)
+        var _onGotPSIResults = function(results)
         {
             var report = new Report(baseurl.href, results);
             report.build(_onBuiltReport);

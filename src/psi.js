@@ -7,11 +7,18 @@
     var psi = require('psi');
     var async = require('async');
     var colors = require('colors');
+    var EventEmitter = require('events').EventEmitter;
 
     var m = function(baseurl, urls)
     {
+        var emitter = new EventEmitter();
         var results = [];
         var callback = null;
+
+        this.on = function(event, callback)
+        {
+            emitter.on(event, callback);
+        };
 
         this.crawl = function(func)
         {
@@ -31,9 +38,8 @@
             {
                 if (data.responseCode == 200)
                 {
-                    var readable_url = task.url.replace(baseurl.href, '');
                     var id = crypto.createHash('md5').update(task.url).digest('hex');
-                    console.log('Got Insights (' + task.strategy + ') for ' + colors.underline(readable_url.length > 0 ? readable_url : '/'));
+                    emitter.emit('fetched', task.url, task.strategy);
                     if (typeof results[id] === 'undefined')
                     {
                         results[id] = {};
@@ -43,14 +49,14 @@
                 done();
             }).catch(function(error)
             {
-                console.log(colors.red('PSI error: ' + error.message));
-                process.exit();
+                emitter.emit('error', task.url, error);
+                done();
             });
         };
 
         var _onPSIQueueDone = function()
         {
-            callback(results);
+            emitter.emit('complete', results);
         };
 
     };

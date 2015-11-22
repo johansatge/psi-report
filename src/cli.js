@@ -23,15 +23,9 @@
         format: 'html'
     });
 
-    reporter.on('error', function(error)
+    reporter.on('start', function(baseurl)
     {
-        console.log(colors.red(error.message));
-        process.exit(1);
-    });
-
-    reporter.on('crawler_start', function(url)
-    {
-        console.log('Getting report...');
+        console.log('Crawling URLS, starting from ' + colors.underline(baseurl.href));
     });
 
     reporter.on('crawler_url_fetched', function(url)
@@ -44,12 +38,28 @@
         console.log(colors.yellow('Error when fetching ' + colors.underline(url)));
     });
 
-    reporter.on('crawler_done', function(urls)
+    reporter.on('psi_start', function()
     {
-        console.log(colors.green('Found ' + urls.length + ' URLS'));
+        console.log('Getting PSI results...');
     });
 
-    reporter.on('psi_url_fetched', function(result)
+    reporter.on('psi_url_fetched', function(url, strategy)
+    {
+        console.log('Got Insights (' + strategy + ') for ' + colors.underline(url));
+    });
+
+    reporter.on('psi_url_error', function(url, error)
+    {
+        console.log(colors.yellow('PSI error on ' + colors.underline(url) + ' (' + error.message + ')'));
+    });
+
+    reporter.on('error', function(error)
+    {
+        console.log(colors.red(error.message));
+        process.exit(1);
+    });
+
+    reporter.on('complete', function()
     {
 
     });
