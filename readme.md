@@ -1,6 +1,6 @@
 # psi-report
 
-Crawls a website and gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page.
+Crawls a website, gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page, and builds a report in HTML or JSON.
 
 ![](screenshot.jpg)
 
