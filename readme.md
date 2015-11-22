@@ -1,6 +1,6 @@
 # psi-report
 
-Crawl a website and get [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page.
+Crawls a website and gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page.
 
 ![](screenshot.jpg)
 
@@ -25,12 +25,28 @@ npm install -g psi-report
 ## CLI usage
 
 ```bash
-psi-report http://domain.org --format=html
+psi-report http://domain.org
 ```
 
 ### Options
 
+#### `--format=[html|json]`
 
+Output format (default is **html**).
+
+#### `--stdout`
+
+Echoes the result code instead of saving it on the disk.
+
+#### `--silent`
+
+Do not print information when crawling the website.
+
+Automatically set when using the `--stdout` option.
+
+#### `--open`
+
+Opens the generated report in the default application. (OSX only)
 
 ## Programmatic usage
 
