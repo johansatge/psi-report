@@ -38,7 +38,7 @@
 
                 if (typeof result[strategy].ruleGroups.SPEED !== 'undefined')
                 {
-                    placeholders.speed_score = result[strategy].ruleGroups.SPEED.score;
+                    placeholders.speed_score = _fixScore(result[strategy].ruleGroups.SPEED.score, result[strategy].formattedResults.ruleResults, 'SPEED');
                     placeholders.speed_class = result[strategy].ruleGroups.SPEED.score >= 50 ? (result[strategy].ruleGroups.SPEED.score >= 90 ? 'green' : 'orange') : 'red';
                 }
                 else
@@ -49,7 +49,7 @@
 
                 if (typeof result[strategy].ruleGroups.USABILITY !== 'undefined')
                 {
-                    placeholders.usability_score = result[strategy].ruleGroups.USABILITY.score;
+                    placeholders.usability_score = _fixScore(result[strategy].ruleGroups.USABILITY.score, result[strategy].formattedResults.ruleResults, 'USABILITY');
                     placeholders.usability_class = result[strategy].ruleGroups.USABILITY.score >= 50 ? (result[strategy].ruleGroups.USABILITY.score >= 90 ? 'green' : 'orange') : 'red';
                 }
                 else
@@ -89,6 +89,25 @@
                 }
             }
             return html;
+        };
+
+        var _fixScore = function(score, rules, group)
+        {
+            if (parseInt(score) !== 99)
+            {
+                return score;
+            }
+            var impact = 0;
+            for (var index in rules)
+            {
+                var rule = rules[index];
+                if (typeof rule.groups === 'undefined' || rule.groups.indexOf(group) === -1 || typeof rule.ruleImpact === 'undefined')
+                {
+                    continue;
+                }
+                impact += rule.ruleImpact;
+            }
+            return impact !== 0 ? score : 100;
         };
 
         var _buildRule = function(rule)
