@@ -30,16 +30,19 @@
             for (var strategy in result)
             {
                 var placeholders = {};
+                var rule_groups = result[strategy].ruleGroups;
+                var rule_results = result[strategy].formattedResults.ruleResults;
+                var page_stats = result[strategy].pageStats;
 
                 placeholders.url = result[strategy].id;
                 placeholders.encoded_url = encodeURIComponent(result[strategy].id);
                 placeholders.title = result[strategy].title;
                 placeholders.strategy = strategy;
 
-                if (typeof result[strategy].ruleGroups.SPEED !== 'undefined')
+                if (typeof rule_groups.SPEED !== 'undefined')
                 {
-                    placeholders.speed_score = _fixScore(result[strategy].ruleGroups.SPEED.score, result[strategy].formattedResults.ruleResults, 'SPEED');
-                    placeholders.speed_class = result[strategy].ruleGroups.SPEED.score >= 50 ? (result[strategy].ruleGroups.SPEED.score >= 90 ? 'green' : 'orange') : 'red';
+                    placeholders.speed_score = _fixScore(rule_groups.SPEED.score, rule_results, 'SPEED');
+                    placeholders.speed_class = rule_groups.SPEED.score >= 50 ? (rule_groups.SPEED.score >= 90 ? 'green' : 'orange') : 'red';
                 }
                 else
                 {
@@ -47,10 +50,10 @@
                     placeholders.speed_class = '';
                 }
 
-                if (typeof result[strategy].ruleGroups.USABILITY !== 'undefined')
+                if (typeof rule_groups.USABILITY !== 'undefined')
                 {
-                    placeholders.usability_score = _fixScore(result[strategy].ruleGroups.USABILITY.score, result[strategy].formattedResults.ruleResults, 'USABILITY');
-                    placeholders.usability_class = result[strategy].ruleGroups.USABILITY.score >= 50 ? (result[strategy].ruleGroups.USABILITY.score >= 90 ? 'green' : 'orange') : 'red';
+                    placeholders.usability_score = _fixScore(rule_groups.USABILITY.score, rule_results, 'USABILITY');
+                    placeholders.usability_class = rule_groups.USABILITY.score >= 50 ? (rule_groups.USABILITY.score >= 90 ? 'green' : 'orange') : 'red';
                 }
                 else
                 {
@@ -58,15 +61,15 @@
                     placeholders.usability_class = '';
                 }
 
-                placeholders.html_size = filesize(parseInt(result[strategy].pageStats.htmlResponseBytes)).human();
-                placeholders.css_size = filesize(parseInt(result[strategy].pageStats.cssResponseBytes)).human();
-                placeholders.js_size = filesize(parseInt(result[strategy].pageStats.javascriptResponseBytes)).human();
-                placeholders.img_size = filesize(parseInt(result[strategy].pageStats.imageResponseBytes)).human();
-                placeholders.request_size = filesize(parseInt(result[strategy].pageStats.totalRequestBytes)).human();
+                placeholders.html_size = filesize(parseInt(page_stats.htmlResponseBytes)).human();
+                placeholders.css_size = filesize(parseInt(page_stats.cssResponseBytes)).human();
+                placeholders.js_size = filesize(parseInt(page_stats.javascriptResponseBytes)).human();
+                placeholders.img_size = filesize(parseInt(page_stats.imageResponseBytes)).human();
+                placeholders.request_size = filesize(parseInt(page_stats.totalRequestBytes)).human();
 
-                placeholders.total_resources = result[strategy].pageStats.numberResources;
-                placeholders.css_resources = result[strategy].pageStats.numberCssResources;
-                placeholders.js_resources = result[strategy].pageStats.numberJsResources;
+                placeholders.total_resources = page_stats.numberResources;
+                placeholders.css_resources = page_stats.numberCssResources;
+                placeholders.js_resources = page_stats.numberJsResources;
 
                 for (var placeholder in placeholders)
                 {
@@ -74,9 +77,9 @@
                 }
 
                 var has_rules = false;
-                for (var index in result[strategy].formattedResults.ruleResults)
+                for (var index in rule_results)
                 {
-                    var rule = result[strategy].formattedResults.ruleResults[index];
+                    var rule = rule_results[index];
                     if (typeof rule.ruleImpact !== 'undefined' && rule.ruleImpact > 0)
                     {
                         html = html.replace('<!--' + strategy + '.rules-->', _buildRule(rule) + '<!--' + strategy + '.rules-->');
