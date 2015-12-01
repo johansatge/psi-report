@@ -21,6 +21,29 @@
         process.exit(0);
     }
 
+    if (argv.help)
+    {
+        var help = [
+            '',
+            'Crawls a website, gets PageSpeed Insights data for each page, and builds a report in HTML or JSON',
+            '',
+            'Usage:',
+            '    psi-report <url>',
+            '',
+            'Example:',
+            '    psi-report daringfireball.net/projects/markdown --output=json --open',
+            '',
+            'Options:',
+            '    --format                Sets output format: html|json (default is html)',
+            '    --save=</my/file.html>  Sets destination file (will save in OS temp dir if empty)',
+            '    --stdout                Echoes the result code (html or json) instead of saving it on the disk',
+            '    --open                  Opens the generated report in the default application. (OSX only)',
+            '    --version               Outputs current version'
+        ];
+        console.log(help.join('\n'));
+        process.exit(0);
+    }
+
     var format = typeof argv.format !== 'undefined' && argv.format === 'json' ? 'json' : 'html';
     var reporter = new Reporter({
         baseurl: argv._[0],
