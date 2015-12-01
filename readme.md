@@ -9,7 +9,10 @@ Crawls a website, gets [PageSpeed Insights](https://developers.google.com/speed/
 * [Installation](#installation)
 * [CLI usage](#cli-usage)
 * [Programmatic usage](#programmatic-usage)
-* [Crawler behavior and output formats](#crawler-behavior-and-output-formats)
+* [Crawler behavior](#crawler-behavior)
+    * [Crawled URLs](#crawled-urls)
+    * [Output formats](#output-formats)
+    * [SSL support](#ssl-support)
 * [Changelog](#changelog)
 * [License](#license)
 * [Credits](#credits)
@@ -25,40 +28,23 @@ npm install -g psi-report
 ## CLI usage
 
 ```bash
-psi-report http://domain.org
+$ psi-report --help
+
+Crawls a website, gets PageSpeed Insights data for each page, and builds a report in HTML or JSON
+
+Usage:
+    psi-report <url>
+
+Example:
+    psi-report daringfireball.net/projects/markdown --output=json --open
+
+Options:
+    --format                Sets output format: html|json (default is html)
+    --save=</my/file.html>  Sets destination file (will save in OS temp dir if empty)
+    --stdout                Echoes the result code (html or json) instead of saving it on the disk
+    --open                  Opens the generated report in the default application. (OSX only)
+    --version               Outputs current version
 ```
-
-### Options
-
-##### `--format=[html|json]`
-
-Output format (default is **html**).
-
-##### `--save=/path/to/file.html|json`
-
-Sets the path of the saved report.
-
-If no path is set, the file will be saved in the OS [temp directory](https://nodejs.org/api/os.html#os_os_tmpdir).
-
-Example, on OSX:
-
-```
-file:///var/folders/nv/8gcgf6_92qqdsp22y1_xp4fm0000gn/T/psi_report_1449009813851.html
-```
-
-##### `--stdout`
-
-Echoes the result code instead of saving it on the disk.
-
-##### `--open`
-
-Opens the generated report in the default application. (OSX only)
-
-This will do nothing if the `--stdout` option is set.
-
-##### `--version`
-
-Outputs current version.
 
 ## Programmatic usage
 
@@ -86,22 +72,22 @@ reporter.on('complete', function(error, baseurl, data)
 reporter.start();
 ```
 
-## Crawler behavior and output formats
+## Crawler behavior
 
-### Crawled URL
+### Crawled URLs
 
 The base URL is used as a root when crawling the pages.
 
 Let's consider those two examples:
 
 ```bash
-psi-report https://daringfireball.net/
+$ psi-report https://daringfireball.net/
 ```
 
 This will crawl the entire website.
 
 ```bash
-psi-report https://daringfireball.net/projects/markdown/
+$ psi-report https://daringfireball.net/projects/markdown/
 ```
 
 This will restrict the crawler to children pages only:
@@ -143,15 +129,25 @@ Two output formats are available.
 
 [More information about the PSI data format](https://developers.google.com/speed/docs/insights/v2/reference/pagespeedapi/runpagespeed#response).
 
+### SSL support
+
+If you want your website to be crawled with `https://`, specify it when firing the command:
+
+```bash
+$ psi-report https://domain.org
+```
+
+If no protocol is set, the command will use `http://`.
+
 ## Changelog
 
 | Version | Date | Notes |
 | --- | --- | --- |
-| `1.0.0` | Novembre 22, 2015 | Initial version |
+| `1.0.0` | December 01, 2015 | Initial version |
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [MIT License](license).
 
 ## Credits
 
