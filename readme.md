@@ -2,7 +2,7 @@
 
 Crawls a website, gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page, and builds a report in HTML or JSON.
 
-![](screenshot.jpg)
+![](screenshot.png)
 
 ---
 
@@ -36,9 +36,15 @@ Output format (default is **html**).
 
 ##### `--save=/path/to/file.html|json`
 
-Sets the path of the report.
+Sets the path of the saved report.
 
 If no path is set, the file will be saved in the OS [temp directory](https://nodejs.org/api/os.html#os_os_tmpdir).
+
+Example, on OSX:
+
+```
+file:///var/folders/nv/8gcgf6_92qqdsp22y1_xp4fm0000gn/T/psi_report_1449009813851.html
+```
 
 ##### `--stdout`
 
