@@ -45,7 +45,7 @@
                     {
                         results[task.url] = {};
                     }
-                    results[task.url][task.strategy] = data;
+                    results[task.url][task.strategy] = _fixScore(data);
                     result_count += 1;
                 }
                 else
@@ -59,6 +59,29 @@
         var _onPSIQueueDone = function()
         {
             emitter.emit('complete', results, result_count);
+        };
+
+        var _fixScore = function(data)
+        {
+            for (var group in data.ruleGroups)
+            {
+                if (typeof data.ruleGroups[group].score === 'undefined' || parseInt(data.ruleGroups[group].score) !== 99)
+                {
+                    continue;
+                }
+                var impact = 0;
+                for (var index in data.formattedResults.ruleResults)
+                {
+                    var rule = data.formattedResults.ruleResults[index];
+                    if (typeof rule.groups === 'undefined' || rule.groups.indexOf(group) === -1 || typeof rule.ruleImpact === 'undefined')
+                    {
+                        continue;
+                    }
+                    impact += rule.ruleImpact;
+                }
+                data.ruleGroups[group].score = impact !== 0 ? data.ruleGroups[group].score : 100;
+            }
+            return data;
         };
 
     };
