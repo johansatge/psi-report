@@ -151,8 +151,9 @@ This project is released under the [MIT License](license).
 
 ## Credits
 
-* [request](https://github.com/request/request)
-* [simplecrawler](https://github.com/cgiffard/node-simplecrawler)
 * [async](https://github.com/caolan/async)
 * [colors](https://github.com/Marak/colors.js)
+* [file-size](https://github.com/Nijikokun/file-size)
+* [request](https://github.com/request/request)
+* [simplecrawler](https://github.com/cgiffard/node-simplecrawler)
 * [yargs](https://github.com/bcoe/yargs)
