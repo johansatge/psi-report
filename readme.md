@@ -1,3 +1,8 @@
+![Version](https://img.shields.io/npm/v/psi-report.svg)
+![Downloads](https://img.shields.io/npm/dm/psi-report.svg)
+![Dependencies](https://img.shields.io/david/johansatge/psi-report.svg)
+![devDependencies](https://img.shields.io/david/dev/johansatge/psi-report.svg)
+
 # psi-report
 
 Crawls a website, gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page, and builds a report in HTML or JSON.
