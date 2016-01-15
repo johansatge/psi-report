@@ -3,7 +3,6 @@
 
     'use strict';
 
-    var psi = require('psi');
     var async = require('async');
     var request = require('request');
     var EventEmitter = require('events').EventEmitter;

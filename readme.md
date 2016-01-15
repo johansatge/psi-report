@@ -143,6 +143,7 @@ If no protocol is set, the command will use `http://`.
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `1.0.1` | January 15, 2016 | Fix call on obsolete package |
 | `1.0.0` | December 01, 2015 | Initial version |
 
 ## License
