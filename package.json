@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/johansatge/psi-report",
   "dependencies": {
-    "async": "^1.5.0",
+    "async": "^1.5.2",
     "colors": "^1.1.2",
     "file-size": "^1.0.0",
-    "request": "^2.67.0",
+    "request": "^2.69.0",
     "simplecrawler": "^0.5.4",
-    "yargs": "^3.29.0"
+    "yargs": "^3.32.0"
   },
   "devDependencies": {}
 }
