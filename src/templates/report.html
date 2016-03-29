@@ -41,7 +41,7 @@
                 font-size   : 22px;
                 line-height : 38px;
                 white-space : nowrap;
-                overflow: hidden;
+                overflow    : hidden;
             }
 
             .overall:after
@@ -79,29 +79,7 @@
 
             .heading
             {
-                position      : relative;
-            }
-
-            .toggle
-            {
-                float      : left;
-                background : transparent;
-                width      : 28px;
-                height     : 28px;
-                margin     : 5px 5px 0 -6px;
-                cursor     : pointer;
-            }
-
-            .toggle .fa
-            {
-                color      : #cccccc;
-                font-size  : 20px;
-                transition : transform 200ms;
-            }
-
-            .toggle.toggled .fa
-            {
-                transform : rotate(90deg);
+                position : relative;
             }
 
             h2
@@ -124,11 +102,12 @@
             .button:visited
             {
                 display          : inline-block;
+                float            : left;
+                margin           : 3px 0 0 0;
                 background-image : linear-gradient(to bottom, #4d90fe, #4787ed);
                 border           : 1px solid #3079ed;
                 color            : #ffffff;
                 padding          : 6px 9px 6px 9px;
-                margin           : 15px 0 0 0;
                 font-size        : 12px;
                 font-weight      : 700;
                 border-radius    : 2px;
@@ -146,9 +125,9 @@
 
             .scores
             {
-                position : absolute;
-                top      : 0;
-                right    : 0;
+                position    : absolute;
+                top         : 0;
+                right       : 0;
                 background  : #ffffff;
                 line-height : normal;
             }
@@ -167,9 +146,9 @@
 
             .score-item
             {
-                display: inline-block;
-                font-size: 14px;
-                margin: 0 0 0 15px;
+                display   : inline-block;
+                font-size : 14px;
+                margin    : 0 0 0 15px;
             }
 
             .score-item .fa
@@ -221,80 +200,6 @@
                 left      : 8px;
                 font-size : 9px;
             }
-
-            .details
-            {
-                margin     : 15px 0 0 0;
-                border-top : 1px solid #dddddd;
-                padding    : 20px 0 0 0;
-            }
-
-            .detail
-            {
-                float : left;
-                width : 49%;
-            }
-
-            .detail:last-child
-            {
-                margin : 0 0 0 2%;
-            }
-
-            h3
-            {
-                font-size : 20px;
-                margin    : 0 0 10px 0;
-            }
-
-            table
-            {
-                width  : 100%;
-                border : 1px solid #ebebeb;
-                font-size: 14px;
-            }
-
-            table td
-            {
-                padding       : 6px 8px 6px 8px;
-                border-bottom : 1px solid #ebebeb;
-            }
-
-            table td:first-child
-            {
-                border-right : 1px solid #ebebeb;
-            }
-
-            table tr:last-child td
-            {
-                border-bottom : 0;
-            }
-
-            .rule
-            {
-                background : #f3f3f3;
-                padding : 12px;
-                margin  : 15px 0 0 0;
-            }
-
-            .rule h4
-            {
-                font-size   : 15px;
-                font-weight : 700;
-                margin      : 0 0 6px 0;
-            }
-
-            .rule p
-            {
-                font-size   : 13px;
-                line-height : 20px;
-            }
-
-            .rule a,
-            .rule a:visited
-            {
-                color           : inherit;
-                text-decoration : underline;
-            }
         </style>
     </head>
     <body>
@@ -305,28 +210,5 @@
             <a href="{{url}}" target="_blank">{{url}}</a>
         </div>
         <!--results-->
-        <script>
-            var toggles = document.querySelectorAll('.toggle');
-            for(var index = 0; index < toggles.length; index += 1)
-            {
-                toggles[index].addEventListener('click', _onToggle);
-            }
-            function _onToggle(evt)
-            {
-                evt.preventDefault();
-                var toggle = evt.currentTarget;
-                var details = toggle.parentNode.parentNode.querySelector('.details');
-                if (toggle.className.search('toggled') !== -1)
-                {
-                    toggle.className = toggle.className.replace('toggled', '');
-                    details.style.display = 'none';
-                }
-                else
-                {
-                    toggle.className += ' toggled';
-                    details.style.display = 'block';
-                }
-            }
-        </script>
     </body>
 </html>
