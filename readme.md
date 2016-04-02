@@ -24,7 +24,8 @@ Crawls a website, gets [PageSpeed Insights](https://developers.google.com/speed/
 Install with [npm](https://www.npmjs.com/):
 
 ```bash
-npm install -g psi-report
+$ npm install psi-report --global
+# --global isn't required if you plan to use the node module
 ```
 
 ## CLI usage
@@ -42,11 +43,10 @@ $ psi-report daringfireball.net/projects/markdown /Users/johan/Desktop/report.ht
 ## Programmatic usage
 
 ```javascript
-var PSIReport = require('psi-report');
+// Basic usage: crawls a website and returns an array of page with the PSI results
 
+var PSIReport = require('psi-report');
 var psi_report = new PSIReport({baseurl: 'http://domain.org'}, onComplete);
-psi_report.on('fetch_url', onFetchURL);
-psi_report.on('fetch_psi', onFetchPSI);
 reporter.start();
 
 function onComplete(baseurl, data)
@@ -55,11 +55,14 @@ function onComplete(baseurl, data)
     console.log(data);
 }
 
+// The "fetch_url" and "fetch_psi" events allow to monitor the crawling process
+psi_report.on('fetch_url', onFetchURL);
 function onFetchURL(error, url)
 {
     console.log((error ? 'Error with URL: ' : 'Fetched URL: ') + url);
 }
 
+psi_report.on('fetch_psi', onFetchPSI);
 function onFetchPSI(error, url, strategy)
 {
     console.log((error ? 'Error with PSI for ' : 'PSI data (' + strategy + ') fetched for ') + url);
@@ -76,6 +79,8 @@ However, `https://daringfireball.net/projects/markdown/` will crawl only:
 
 * `https://daringfireball.net/projects/markdown/`
 * `https://daringfireball.net/projects/markdown/basics`
+* `https://daringfireball.net/projects/markdown/syntax`
+* `https://daringfireball.net/projects/markdown/license`
 * And so on
 
 ## Changelog
