@@ -37,7 +37,6 @@
             '    --format                Sets output format: html|json (default is html)',
             '    --save=</my/file.html>  Sets destination file (will save in OS temp dir if empty)',
             '    --stdout                Echoes the result code (html or json) instead of saving it on the disk',
-            '    --open                  Opens the generated report in the default application. (OSX only)',
             '    --version               Outputs current version'
         ];
         console.log(help.join('\n'));
@@ -87,10 +86,6 @@
         {
             fs.writeFileSync(path, data, {encoding: 'utf8'});
             _verbose(colors.green('Report saved ') + '(' + colors.underline(path) + ')');
-            if (typeof argv.open !== 'undefined')
-            {
-                exec('open ' + path);
-            }
             process.exit(0);
         }
         catch (error)
