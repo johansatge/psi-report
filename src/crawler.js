@@ -8,7 +8,7 @@
     var Crawler = require('crawler');
     var EventEmitter = require('events').EventEmitter;
 
-    var m = function(baseurl)
+    var m = function(baseurl, module_callback)
     {
 
         EventEmitter.call(this);
@@ -63,7 +63,7 @@
          */
         function _onAllCrawled()
         {
-            this.emit('complete', urls);
+            module_callback(urls);
         }
 
         /**

@@ -30,9 +30,8 @@
                 module_callback(baseurl, []);
                 return;
             }
-            var crawler = new Crawler(baseurl);
+            var crawler = new Crawler(baseurl, _onCrawlerComplete.bind(this));
             crawler.on('fetch', _onCrawledURL.bind(this));
-            crawler.on('complete', _onCrawlerComplete.bind(this));
             crawler.crawl();
         };
 
@@ -58,9 +57,8 @@
                 module_callback(baseurl, []);
                 return;
             }
-            var psi = new PSI(baseurl, urls);
+            var psi = new PSI(baseurl, urls, _onGotPSIResults.bind(this));
             psi.on('fetch', _onGotPSIResult.bind(this));
-            psi.on('complete', _onGotPSIResults);
             psi.crawl();
         };
 
