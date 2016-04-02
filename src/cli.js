@@ -5,13 +5,12 @@
 
     'use strict';
 
-    var exec = require('child_process').exec;
     var fs = require('fs');
-    var os = require('os');
     var colors = require('colors');
     var argv = require('yargs').argv;
 
-    var Reporter = require('./core.js');
+    var PSIReport = require('./main.js');
+    var html_report = require('./html_report.js');
 
     var manifest = require('../package.json');
 
@@ -21,88 +20,73 @@
         process.exit(0);
     }
 
-    if (argv.help)
+    if (argv.help || typeof argv._[0] === 'undefined' || typeof argv._[1] === 'undefined')
     {
         var help = [
             '',
-            'Crawls a website, gets PageSpeed Insights data for each page, and builds a report in HTML or JSON',
+            'Crawls a website, gets PageSpeed Insights data for each page, and exports an HTML report',
             '',
             'Usage:',
-            '    psi-report <url>',
+            '    psi-report <url> <dest_path>',
             '',
             'Example:',
-            '    psi-report daringfireball.net/projects/markdown --output=json --open',
+            '    psi-report daringfireball.net/projects/markdown /Users/johan/Desktop/report.html',
             '',
             'Options:',
-            '    --format                Sets output format: html|json (default is html)',
-            '    --save=</my/file.html>  Sets destination file (will save in OS temp dir if empty)',
-            '    --stdout                Echoes the result code (html or json) instead of saving it on the disk',
-            '    --version               Outputs current version'
+            '    --help       Outputs help',
+            '    --version    Outputs current version'
         ];
         console.log(help.join('\n'));
         process.exit(0);
     }
 
-    var format = typeof argv.format !== 'undefined' && argv.format === 'json' ? 'json' : 'html';
-    var reporter = new Reporter({
-        baseurl: argv._[0],
-        format: format
-    });
+    var psi_report = new PSIReport({baseurl: argv._[0]}, _onComplete);
+    psi_report.on('fetch_url', _onFetchURL);
+    psi_report.on('fetch_psi', _onFetchPSI);
+    psi_report.start();
 
-    reporter.on('_start', function(baseurl)
+    /**
+     * Fetched an URL
+     * @param error
+     * @param url
+     */
+    function _onFetchURL(error, url)
     {
-        _verbose('Crawling URLS, starting from ' + colors.underline(baseurl));
-    });
-    reporter.on('_crawler_url_fetched', function(url)
+        url = colors.underline(url);
+        console.log(error ? colors.yellow('Fetch error on ' + url + ' (' + error.message + ')') : 'Found ' + url);
+    }
+
+    /**
+     * Fetched an Insight
+     * @param error
+     * @param url
+     * @param strategy
+     */
+    function _onFetchPSI(error, url, strategy)
     {
-        _verbose('Found ' + colors.underline(url));
-    });
-    reporter.on('_crawler_url_error', function(url)
+        url = colors.underline(url);
+        console.log(error ? colors.yellow('PSI error on ' + url + ' (' + error.message + ')') : 'Got PSI data (' + strategy + ') for ' + url);
+    }
+
+    /**
+     * Builds the HTML document when crawling is done
+     * @param baseurl
+     * @param data
+     */
+    function _onComplete(baseurl, data)
     {
-        _verbose(colors.yellow('Error when fetching ' + colors.underline(url)));
-    });
-    reporter.on('_psi_url_fetched', function(url, strategy)
-    {
-        _verbose('Got Insights (' + strategy + ') for ' + colors.underline(url));
-    });
-    reporter.on('_psi_url_error', function(url, error)
-    {
-        _verbose(colors.yellow('PSI error on ' + colors.underline(url) + ' (' + error.message + ')'));
-    });
-    reporter.on('complete', function(error, baseurl, data)
-    {
-        if (error)
+        if (data.length === 0)
         {
-            console.log(colors.red(error.message));
+            console.log(colors.red('No pages found'));
             process.exit(1);
         }
-        if (argv.stdout)
+        var html = html_report(baseurl, data);
+        var path = argv._[1];
+        fs.writeFile(path, html, {encoding: 'utf8'}, function(error)
         {
-            console.log(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
-            process.exit(0);
-        }
-        var path = typeof argv.save !== 'undefined' ? argv.save : os.tmpdir().replace(/\/$/, '') + '/psi_report_' + new Date().getTime() + '.' + format;
-        try
-        {
-            fs.writeFileSync(path, data, {encoding: 'utf8'});
-            _verbose(colors.green('Report saved ') + '(' + colors.underline(path) + ')');
-            process.exit(0);
-        }
-        catch (error)
-        {
-            console.log(colors.red(error.message));
-            process.exit(1);
-        }
-    });
-
-    reporter.start();
-
-    function _verbose(message)
-    {
-        if (!argv.stdout)
-        {
-            console.log(message);
-        }
+            console.log(error ? colors.red('Write error (' + error.message + ')') : colors.green('Report saved'));
+            process.exit(error ? 1 : 0);
+        });
     }
 
 })(process);

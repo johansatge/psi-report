@@ -3,27 +3,23 @@
 
     'use strict';
 
+    var util = require('util');
     var async = require('async');
     var request = require('request');
     var EventEmitter = require('events').EventEmitter;
 
     var m = function(baseurl, urls)
     {
-        var emitter = new EventEmitter();
         var results = {};
         var result_count = 0;
         var callback = null;
-
-        this.on = function(event, callback)
-        {
-            emitter.on(event, callback);
-        };
+        EventEmitter.call(this);
 
         this.crawl = function(func)
         {
             callback = func;
-            var psi_queue = async.queue(_getPSIData, 3);
-            psi_queue.drain = _onPSIQueueDone;
+            var psi_queue = async.queue(_getPSIData.bind(this), 3);
+            psi_queue.drain = _onPSIQueueDone.bind(this);
             for (var index = 0; index < urls.length; index += 1)
             {
                 psi_queue.push({url: urls[index], strategy: 'mobile'});
@@ -35,21 +31,22 @@
         {
             var api_url = 'https://www.googleapis.com/pagespeedonline/v2/runPagespeed?strategy=$1&url=$2';
             api_url = api_url.replace('$1', task.strategy).replace('$2', encodeURIComponent(task.url));
+            var self = this;
             request({url: api_url, json: true}, function(error, response, data)
             {
                 if (!error && response.statusCode == 200)
                 {
-                    emitter.emit('fetched', task.url, task.strategy);
+                    self.emit('fetch', null, task.url, task.strategy);
                     if (typeof results[task.url] === 'undefined')
                     {
-                        results[task.url] = {};
+                        results[task.url] = {url: task.url};
                     }
-                    results[task.url][task.strategy] = _fixScore(data);
+                    results[task.url][task.strategy] = _parseData(data);
                     result_count += 1;
                 }
                 else
                 {
-                    emitter.emit('error', task.url, error);
+                    self.emit('fetch', error, task.url, task.strategy);
                 }
                 done();
             });
@@ -57,33 +54,55 @@
 
         var _onPSIQueueDone = function()
         {
-            emitter.emit('complete', results, result_count);
+            var data = [];
+            for(var url in results)
+            {
+                data.push(results[url]);
+            }
+            this.emit('complete', data);
         };
 
-        var _fixScore = function(data)
+        var _parseData = function(raw_data)
         {
-            for (var group in data.ruleGroups)
+            // Fixes score (sometimes PSI returns 99 without any advices / information)
+            for (var group in raw_data.ruleGroups)
             {
-                if (typeof data.ruleGroups[group].score === 'undefined' || parseInt(data.ruleGroups[group].score) !== 99)
+                if (typeof raw_data.ruleGroups[group].score === 'undefined' || parseInt(raw_data.ruleGroups[group].score) !== 99)
                 {
                     continue;
                 }
                 var impact = 0;
-                for (var index in data.formattedResults.ruleResults)
+                for (var index in raw_data.formattedResults.ruleResults)
                 {
-                    var rule = data.formattedResults.ruleResults[index];
+                    var rule = raw_data.formattedResults.ruleResults[index];
                     if (typeof rule.groups === 'undefined' || rule.groups.indexOf(group) === -1 || typeof rule.ruleImpact === 'undefined')
                     {
                         continue;
                     }
                     impact += rule.ruleImpact;
                 }
-                data.ruleGroups[group].score = impact !== 0 ? data.ruleGroups[group].score : 100;
+                raw_data.ruleGroups[group].score = impact !== 0 ? raw_data.ruleGroups[group].score : 100;
             }
+
+            // Gets relevant data
+            var data = {
+                speed:
+                {
+                    score: raw_data.ruleGroups.SPEED.score,
+                    keyword: raw_data.ruleGroups.SPEED.score >= 50 ? (raw_data.ruleGroups.SPEED.score >= 90 ? 'green' : 'orange') : 'red'
+                },
+                usability:
+                {
+                    score: typeof raw_data.ruleGroups.USABILITY !== 'undefined' ? raw_data.ruleGroups.USABILITY.score : false,
+                    keyword: typeof raw_data.ruleGroups.USABILITY !== 'undefined' ? (raw_data.ruleGroups.USABILITY.score >= 50 ? (raw_data.ruleGroups.USABILITY.score >= 90 ? 'green' : 'orange') : 'red') : false
+                }
+            };
+
             return data;
         };
 
     };
+    util.inherits(m, EventEmitter);
 
     module.exports = m;
 

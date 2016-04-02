@@ -3,64 +3,83 @@
 
     'use strict';
 
-    var Crawler = require('simplecrawler');
+    var util = require('util');
+    var jsdom = require('jsdom');
+    var Crawler = require('crawler');
     var EventEmitter = require('events').EventEmitter;
 
     var m = function(baseurl)
     {
 
-        var emitter = new EventEmitter();
+        EventEmitter.call(this);
         var urls = [];
-        var crawler = null;
+        var crawler = new Crawler({
+            jQuery: jsdom,
+            maxConnections: 10,
+            callback: _onCrawled.bind(this),
+            onDrain: _onAllCrawled.bind(this)
+        });
 
-        this.on = function(event, callback)
-        {
-            emitter.on(event, callback);
-        };
-
+        /**
+         * Starts crawling
+         */
         this.crawl = function()
         {
-            crawler = new Crawler(baseurl.host, baseurl.path, baseurl.port !== null ? baseurl.port : 80);
-            crawler.initialProtocol = baseurl.protocol.replace(/:$/, '');
-            crawler.supportedMimeTypes = [/text\/html/, /application\/xhtml\+xml/];
-            crawler.downloadUnsupported = false;
-
-            crawler.addFetchCondition(_filterFetchCondition);
-            crawler.on('fetchcomplete', _onCrawlerItemComplete);
-            crawler.on('fetcherror', _onCrawlerItemError);
-            crawler.on('complete', _onCrawlerComplete);
-
-            crawler.start(); // @todo handle errors
+            crawler.queue(baseurl.href);
         };
 
-        function _onCrawlerItemComplete(item)
+        /**
+         * Processes a crawled page
+         * If it's an HTML document, checks each <a> and appends new URLs to the crawler queue
+         * @param error
+         * @param result
+         * @param $
+         */
+        function _onCrawled(error, result, $)
         {
-            var mime_types = /(text\/html|application\/xhtml\+xml)/;
-            if (item.stateData.contentType && item.stateData.contentType.search(mime_types) !== -1)
+            if (error)
             {
-                if (item.url.search(baseurl.href) === 0)
-                {
-                    urls.push(item.url);
-                    emitter.emit('fetched', item.url);
-                }
+                this.emit('fetch', error, null);
+                return;
             }
+            if (typeof $ === 'undefined' || urls.indexOf(result.uri) > -1)
+            {
+                return;
+            }
+            this.emit('fetch', null, result.uri);
+            urls.push(result.uri);
+            $('a').map(function(index, a)
+            {
+                var url = typeof a.href !== 'undefined' ? a.href.replace(/#[^#]*$/, '') : null;
+                if (url !== null && urls.indexOf(url) === -1 && _startsWithBaseURL(url))
+                {
+                    crawler.queue(url);
+                }
+            });
         }
 
-        function _onCrawlerItemError(item)
+        /**
+         * Returns the list of URLs when crawling is done
+         */
+        function _onAllCrawled()
         {
-            emitter.emit('error', item.url);
+            this.emit('complete', urls);
         }
 
-        function _filterFetchCondition(url)
+        /**
+         * Checks if the given URL begins with the base URL (the one providden to start the crawler)
+         * @param url
+         * @return bool
+         */
+        function _startsWithBaseURL(url)
         {
-            return !url.path.match(/\.(css|js|png|jpe?g|gif|ico)$/i) && url.path.search(baseurl.path) === 0;
+            var base = baseurl.href.replace(/^https?:\/\//, '').replace(/^\/\//, '');
+            url = url.replace(/^https?:\/\//, '').replace(/^\/\//, '');
+            return url.search(base) === 0;
         }
 
-        function _onCrawlerComplete()
-        {
-            emitter.emit('complete', urls);
-        }
     };
+    util.inherits(m, EventEmitter);
 
     module.exports = m;
 

@@ -1,9 +1,9 @@
 {
   "name": "psi-report",
-  "version": "1.0.1",
-  "description": "Crawls a website, gets PageSpeed Insights data for each page, and builds a report in HTML or JSON",
+  "version": "2.0.0",
+  "description": "Crawls a website, gets PageSpeed Insights data for each page, and exports an HTML report",
   "repository": "johansatge/psi-report",
-  "main": "src/core.js",
+  "main": "src/main.js",
   "bin": {
     "psi-report": "src/cli.js"
   },
@@ -12,6 +12,7 @@
     "psi",
     "pagespeed",
     "insights",
+    "performance",
     "crawler",
     "report",
     "spider"
@@ -28,9 +29,9 @@
   "dependencies": {
     "async": "^1.5.2",
     "colors": "^1.1.2",
-    "file-size": "^1.0.0",
+    "crawler": "^0.4.3",
+    "jsdom": "^8.2.0",
     "request": "^2.69.0",
-    "simplecrawler": "^0.5.4",
     "yargs": "^3.32.0"
   },
   "devDependencies": {}
