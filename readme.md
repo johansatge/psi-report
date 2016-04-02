@@ -56,6 +56,7 @@ function onComplete(baseurl, data)
 }
 
 // The "fetch_url" and "fetch_psi" events allow to monitor the crawling process
+
 psi_report.on('fetch_url', onFetchURL);
 function onFetchURL(error, url)
 {
@@ -82,6 +83,8 @@ However, `https://daringfireball.net/projects/markdown/` will crawl only:
 * `https://daringfireball.net/projects/markdown/syntax`
 * `https://daringfireball.net/projects/markdown/license`
 * And so on
+
+*This may be useful to crawl only one part of a website: everything starting with `/en`, for instance.*
 
 ## Changelog
 
