@@ -43,7 +43,7 @@ $ psi-report daringfireball.net/projects/markdown /Users/johan/Desktop/report.ht
 ## Programmatic usage
 
 ```javascript
-// Basic usage: crawls a website and returns an array of page with the PSI results
+// Basic usage: crawls a website, and returns an array of pages with their PSI results
 
 var PSIReport = require('psi-report');
 var psi_report = new PSIReport({baseurl: 'http://domain.org'}, onComplete);
