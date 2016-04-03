@@ -80,8 +80,10 @@
          */
         var _onGotPSIResults = function(results)
         {
-            var html = html_report(baseurl.href, results);
-            module_callback(baseurl.href, results, html);
+            html_report(baseurl.href, results, function(html)
+            {
+                module_callback(baseurl.href, results, html);
+            });
         };
 
     };
