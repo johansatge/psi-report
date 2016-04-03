@@ -10,7 +10,6 @@
     var argv = require('yargs').argv;
 
     var PSIReport = require('./main.js');
-    var html_report = require('./html_report.js');
 
     var manifest = require('../package.json');
 
@@ -73,14 +72,13 @@
      * @param baseurl
      * @param data
      */
-    function _onComplete(baseurl, data)
+    function _onComplete(baseurl, data, html)
     {
         if (data.length === 0)
         {
             console.log(colors.red('No pages found'));
             process.exit(1);
         }
-        var html = html_report(baseurl, data);
         var path = argv._[1];
         if (!path.match(/\.html?$/))
         {

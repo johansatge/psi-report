@@ -9,6 +9,7 @@
 
     var Crawler = require('./crawler.js');
     var PSI = require('./psi.js');
+    var html_report = require('./html_report.js');
 
     var m = function(params, module_callback)
     {
@@ -79,7 +80,8 @@
          */
         var _onGotPSIResults = function(results)
         {
-            module_callback(baseurl.href, results);
+            var html = html_report(baseurl.href, results);
+            module_callback(baseurl.href, results, html);
         };
 
     };
