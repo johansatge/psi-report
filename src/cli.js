@@ -82,6 +82,10 @@
         }
         var html = html_report(baseurl, data);
         var path = argv._[1];
+        if (!path.match(/\.html?$/))
+        {
+            path += '.html';
+        }
         fs.writeFile(path, html, {encoding: 'utf8'}, function(error)
         {
             console.log(error ? colors.red('Write error (' + error.message + ')') : colors.green('Report saved'));
