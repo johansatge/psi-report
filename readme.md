@@ -5,7 +5,7 @@
 
 # psi-report
 
-Crawls a website, gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page, and exports an HTML report.
+Crawls a website or get URLs from a sitemap.xml or a file, gets [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/) data for each page, and exports an HTML report.
 
 ![](screenshot.png)
 
@@ -31,7 +31,16 @@ $ npm install psi-report --global
 ## CLI usage
 
 ```bash
-$ psi-report <url> <dest_path>
+$ psi-report [options] <url> <dest_path>
+```
+
+Options:
+
+```bash
+    -V, --version               output the version number
+    --urls-from-sitemap [name]  Get the list of URLs from sitemap.xml (don't crawl)
+    --urls-from-file [name]     Get the list of URLs from a file, one url per line (don't crawl)
+    -h, --help                  output usage information
 ```
 
 Example:
@@ -87,6 +96,15 @@ However, `https://daringfireball.net/projects/markdown/` will crawl only:
 
 *This may be useful to crawl only one part of a website: everything starting with `/en`, for instance.*
 
+## URLs from a sitemap.xml or a file
+
+Instead of crawling the website, you can set the URL list with a sitemap.xml or a file.
+
+* `--urls-from-sitemap https://example.com/sitemap.xml`
+* `--urls-from-file /path/to/urls.txt`
+
+Only the URLs inside this file will be processed.
+
 ## Changelog
 
 This project uses [semver](http://semver.org/).
@@ -107,4 +125,5 @@ This project is released under the [MIT License](license.md).
 * [colors](https://github.com/Marak/colors.js)
 * [request](https://github.com/request/request)
 * [crawler](https://github.com/sylvinus/node-crawler)
-* [yargs](https://github.com/bcoe/yargs)
+* [commander](https://github.com/tj/commander.js)
+* [sitemapper](https://github.com/hawaiianchimp/sitemapper)
