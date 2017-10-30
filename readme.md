@@ -107,5 +107,4 @@ This project is released under the [MIT License](license.md).
 * [colors](https://github.com/Marak/colors.js)
 * [request](https://github.com/request/request)
 * [crawler](https://github.com/sylvinus/node-crawler)
-* [jsdom](https://github.com/tmpvar/jsdom)
 * [yargs](https://github.com/bcoe/yargs)
