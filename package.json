@@ -1,6 +1,6 @@
 {
   "name": "psi-report",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Crawls a website, gets PageSpeed Insights data for each page, and exports an HTML report",
   "repository": "johansatge/psi-report",
   "main": "src/main.js",

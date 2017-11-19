@@ -111,6 +111,7 @@ This project uses [semver](http://semver.org/).
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `2.1.0` | 2017-11-19 | Add `--urls-from-sitemap` and `--urls-from-file` (@blaryjp)|
 | `2.0.0` | 2016-04-02 | Deep module rewrite (New module API, updated CLI usage) |
 | `1.0.1` | 2016-01-15 | Fix call on obsolete package |
 | `1.0.0` | 2015-12-01 | Initial version |
