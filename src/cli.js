@@ -7,39 +7,31 @@
 
     var fs = require('fs');
     var colors = require('colors');
-    var argv = require('yargs').argv;
+    var program = require('commander');
 
     var PSIReport = require('./main.js');
 
     var manifest = require('../package.json');
 
-    if (argv.version)
-    {
-        console.log('psi-report ' + manifest.version);
-        process.exit(0);
+    program
+        .version(manifest.version)
+        .description('Crawls a website or get URLs from a sitemap.xml or a file, gets PageSpeed Insights data for each page, and exports an HTML report.')
+        .usage('[options] <url> <dest_path>')
+        .option('--urls-from-sitemap [name]', 'Get the list of URLs from sitemap.xml (don\'t crawl)')
+        .option('--urls-from-file [name]', 'Get the list of URLs from a file, one url per line (don\'t crawl)')
+        .parse(process.argv);
+
+    // ERROR: no base-url, or no output file
+    if (program.args.length !== 2) {
+        program.outputHelp(colors.red);
+        process.exit(1);
     }
 
-    if (argv.help || typeof argv._[0] === 'undefined' || typeof argv._[1] === 'undefined')
-    {
-        var help = [
-            '',
-            'Crawls a website, gets PageSpeed Insights data for each page, and exports an HTML report',
-            '',
-            'Usage:',
-            '    psi-report <url> <dest_path>',
-            '',
-            'Example:',
-            '    psi-report daringfireball.net/projects/markdown /Users/johan/Desktop/report.html',
-            '',
-            'Options:',
-            '    --help       Outputs help',
-            '    --version    Outputs current version'
-        ];
-        console.log(help.join('\n'));
-        process.exit(0);
-    }
-
-    var psi_report = new PSIReport({baseurl: argv._[0]}, _onComplete);
+    var psi_report = new PSIReport({
+        baseurl: program.args[0],
+        urlsFromFile: program.urlsFromFile,
+        urlsFromSitemap: program.urlsFromSitemap
+    }, _onComplete);
     psi_report.on('fetch_url', _onFetchURL);
     psi_report.on('fetch_psi', _onFetchPSI);
     psi_report.start();
@@ -80,7 +72,7 @@
             console.log(colors.red('No pages found'));
             process.exit(1);
         }
-        var path = argv._[1];
+        var path = program.args[1];
         if (!path.match(/\.html?$/))
         {
             path += '.html';

@@ -3,9 +3,11 @@
 
     'use strict';
 
+    var fs = require('fs');
     var util = require('util');
     var url = require('url');
     var EventEmitter = require('events').EventEmitter;
+    var Sitemapper = require('sitemapper');
 
     var Crawler = require('./crawler.js');
     var PSI = require('./psi.js');
@@ -31,9 +33,24 @@
                 module_callback(baseurl, []);
                 return;
             }
-            var crawler = new Crawler(baseurl, _onCrawlerComplete.bind(this));
-            crawler.on('fetch', _onCrawledURL.bind(this));
-            crawler.crawl();
+
+            if (params.urlsFromSitemap)
+            {
+                var sitemap = new Sitemapper();
+                sitemap.fetch(params.urlsFromSitemap).then((function (data) {
+                    _onCrawlerComplete.bind(this)(data && data.sites || []);
+                }).bind(this));
+            }
+            else if (params.urlsFromFile)
+            {
+                _onCrawlerComplete.bind(this)(fs.readFileSync(params.urlsFromFile).toString().split("\n"));
+            }
+            else
+            {
+                var crawler = new Crawler(baseurl, _onCrawlerComplete.bind(this));
+                crawler.on('fetch', _onCrawledURL.bind(this));
+                crawler.crawl();
+            }
         };
 
         /**

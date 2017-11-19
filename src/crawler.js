@@ -4,7 +4,7 @@
     'use strict';
 
     var util = require('util');
-    var jsdom = require('jsdom');
+    var URL = require('url');
     var Crawler = require('crawler');
     var EventEmitter = require('events').EventEmitter;
 
@@ -14,11 +14,11 @@
         EventEmitter.call(this);
         var urls = [];
         var crawler = new Crawler({
-            jQuery: jsdom,
             maxConnections: 10,
-            callback: _onCrawled.bind(this),
-            onDrain: _onAllCrawled.bind(this)
+            callback: _onCrawled.bind(this)
         });
+
+        crawler.on('drain', _onAllCrawled.bind(this));
 
         /**
          * Starts crawling
@@ -33,29 +33,32 @@
          * If it's an HTML document, checks each <a> and appends new URLs to the crawler queue
          * @param error
          * @param result
-         * @param $
+         * @param done
          */
-        function _onCrawled(error, result, $)
+        function _onCrawled(error, result, done)
         {
             if (error)
             {
                 this.emit('fetch', error, null);
-                return;
+                return done();
             }
-            if (typeof $ === 'undefined' || urls.indexOf(result.uri) > -1)
+            if (typeof result.$ === 'undefined' || urls.indexOf(result.request.uri.href) > -1)
             {
-                return;
+                return done();
             }
-            this.emit('fetch', null, result.uri);
-            urls.push(result.uri);
-            $('a').map(function(index, a)
+            this.emit('fetch', null, result.request.uri.href);
+            urls.push(result.request.uri.href);
+            result.$('a').each(function(index, a)
             {
-                var url = typeof a.href !== 'undefined' ? a.href.replace(/#[^#]*$/, '') : null;
+                let url = result.$(a).attr('href');
+                url = typeof url !== 'undefined' ? url.replace(/#[^#]*$/, '') : null;
+                url = url ? URL.resolve(result.request.uri.href, url) : null;
                 if (url !== null && urls.indexOf(url) === -1 && _startsWithBaseURL(url))
                 {
                     crawler.queue(url);
                 }
             });
+            done();
         }
 
         /**
