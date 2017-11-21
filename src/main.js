@@ -24,6 +24,18 @@
         }
 
         /**
+         * Checks if the given URL begins with the base URL
+         * @param url
+         * @return bool
+         */
+        function _startsWithBaseURL(url)
+        {
+            var base = baseurl.href.replace(/^https?:\/\//, '').replace(/^\/\//, '');
+            url = url.replace(/^https?:\/\//, '').replace(/^\/\//, '');
+            return url.search(base) === 0;
+        }
+
+        /**
          * Starts the main process
          */
         this.start = function()
@@ -43,7 +55,9 @@
             }
             else if (params.urlsFromFile)
             {
-                _onCrawlerComplete.bind(this)(fs.readFileSync(params.urlsFromFile).toString().split("\n"));
+                var urlsFromFile = fs.readFileSync(params.urlsFromFile).toString().split("\n");
+                urlsFromFile = urlsFromFile.map((u) => _startsWithBaseURL(u) ? u : `${baseurl.href}${u.replace(/^\//, '')}`);
+                _onCrawlerComplete.bind(this)(urlsFromFile);
             }
             else
             {
