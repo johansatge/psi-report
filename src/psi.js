@@ -44,6 +44,7 @@
                 if (error || response.statusCode !== 200)
                 {
                     self.emit('fetch', error ? error : new Error('HTTP error ' + response.statusCode), task.url, task.strategy);
+                    callback();   // skip
                     return;
                 }
                 if (typeof results[task.url] === 'undefined')
