@@ -56,7 +56,7 @@ $ psi-report daringfireball.net/projects/markdown /Users/johan/Desktop/report.ht
 
 var PSIReport = require('psi-report');
 var psi_report = new PSIReport({baseurl: 'http://domain.org'}, onComplete);
-reporter.start();
+psi_report.start();
 
 function onComplete(baseurl, data, html)
 {
